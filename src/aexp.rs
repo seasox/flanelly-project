@@ -18,8 +18,7 @@ impl AExp {
         return match self {
             AExp::Num(_) => false,
             AExp::Var(name) => x.eq(name),
-            AExp::Add(left, right)
-            | AExp::Mul(left, right) =>
+            AExp::Add(left, right) | AExp::Mul(left, right) =>
                 left.contains_var(x) || right.contains_var(x)
         }
     }
