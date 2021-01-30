@@ -56,8 +56,11 @@ pub fn parse(s: &str) -> Result<Prog, String> {
 /// mul       ::= aexp_atom * ... * aexp_atom
 /// aexp_atom ::= n | x | `(` aexp `)`
 ///
-/// bexp      ::= lesseq
+/// bexp      ::= lesseq | bool_neg | bool_and | bool_or
 /// lesseq    ::= aexp `<=` aexp
+/// bool_neq  ::= `!`bexp
+/// bool_and  ::= bexp `&&` bexp
+/// bool_or  ::= bexp `||` bexp
 ///
 /// with $n \in \mathbb{N}$ and $x \in \mathit{Var}$
 /// ```
