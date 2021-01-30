@@ -19,7 +19,7 @@ impl MemConfig {
     /// Write operation
     pub fn assign(&mut self, x: &VarName, n: i32) {
         let MemConfig(map) = self;
-        map.insert(x.copy(), n);
+        map.insert(x.clone(), n);
     }
 }
 
