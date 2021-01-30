@@ -80,7 +80,7 @@ fn aexp(s: &str) -> IResult<&str, AExp> {
 
 /// A boolean expression is a less-eq comparison.
 fn bexp(s: &str) -> IResult<&str, BExp> {
-    lesseq(s)
+    alt((lesseq, neg, and, or))(s)
 }
 
 //////////
@@ -176,6 +176,28 @@ fn lesseq(s: &str) -> IResult<&str, BExp> {
     let (s, _) =  bin_op("<=", s)?;
     let (s, right) = aexp(s)?;
     Ok((s, LessEq(Box::new(left), Box::new(right))))
+}
+
+fn neg(s: &str) -> IResult<&str, BExp> {
+    let (s, _) = tag("!")(s)?;
+    let (s, b) = bexp(s)?;
+    Ok((s, Neg(Box::new(b))))
+}
+
+fn and(s: &str) -> IResult<&str, BExp> {
+    let (s, left) = bexp(s)?;
+    // TODO: fix operator precedence (see arithmetic sums)
+    let (s, and) = bin_op("&&", s)?;
+    let (s, right) = bexp(s)?;
+    Ok((s, And(Box::new(left), Box::new(right))))
+}
+
+fn or(s: &str) -> IResult<&str, BExp> {
+    let (s, left) = bexp(s)?;
+    // TODO: fix operator precedence (see arithmetic sums)
+    let (s, and) = bin_op("||", s)?;
+    let (s, right) = bexp(s)?;
+    Ok((s, And(Box::new(left), Box::new(right))))
 }
 
 //////////////
