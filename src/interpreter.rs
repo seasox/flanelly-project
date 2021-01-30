@@ -58,11 +58,11 @@ pub fn eval_prog_atom(p: &ProgAtom, mut mem: MemConfig) -> MemConfig {
             }
         }
         While(b, p) => {
-            let mut old_mem:MemConfig = mem.clone();
-            while eval_bexp(b,&old_mem) {
-                old_mem = eval_prog(p,old_mem);
+            //TODO maybe fix later clone mem
+            while eval_bexp(b,&mem) {
+                mem = eval_prog(p,mem);
             }
-            return old_mem;
+            return mem;
         }
     }
 }
