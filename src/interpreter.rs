@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use crate::{ast::{Prog, ProgAtom, ProgAtom::*}, aexp::AExp, aexp::AExp::*, bexp::BExp::*, common::VarName, bexp::BExp};
+use std::fs::read_to_string;
 
 /// This struct represents a memory configuration. Each variable is assigned an `i32` via a `HashMap`; if there is no entry in the `HashMap`, then the assignment is `0`.
 #[derive(Debug)]
@@ -57,7 +58,11 @@ pub fn eval_prog_atom(p: &ProgAtom, mut mem: MemConfig) -> MemConfig {
             }
         }
         While(b, p) => {
-            todo!()
+            let mut old_mem:MemConfig = mem.clone();
+            while eval_bexp(b,&old_mem) {
+                old_mem = eval_prog(p,old_mem);
+            }
+            return old_mem;
         }
     }
 }
@@ -74,5 +79,9 @@ pub fn eval_aexp(a: &AExp, mem: &MemConfig) -> i32 {
 
 /// Evaluate boolean expression on given memory configuration. This function always returns.
 pub fn eval_bexp(a: &BExp, mem: &MemConfig) -> bool {
-    todo!();
+    return match a {
+        LessEq(a1, a2) => {
+            eval_aexp(a1, mem) <= eval_aexp(a2, mem)
+        }
+    }
 }
