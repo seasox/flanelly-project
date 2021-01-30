@@ -7,6 +7,9 @@ use crate::aexp::*;
 #[derive(PartialEq,Clone,Debug,Serialize,Deserialize,Eq,Hash)]
 pub enum BExp {
     LessEq(Box<AExp>, Box<AExp>),
+    Neg(Box<BExp>),
+    And(Box<BExp>,Box<BExp>),
+    Or(Box<BExp>,Box<BExp>),
 }
 
 impl Display for BExp {

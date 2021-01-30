@@ -83,5 +83,14 @@ pub fn eval_bexp(a: &BExp, mem: &MemConfig) -> bool {
         LessEq(a1, a2) => {
             eval_aexp(a1, mem) <= eval_aexp(a2, mem)
         }
+        Or(b1,b2) => {
+            eval_bexp(b1, mem) || eval_bexp(b2, mem)
+        }
+        And(b1,b2) => {
+            eval_bexp(b1, mem) && eval_bexp(b2, mem)
+        }
+        Neg(b1) => {
+            !eval_bexp(b1, mem)
+        }
     }
 }
