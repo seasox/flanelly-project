@@ -12,13 +12,13 @@ impl MemConfig {
     /// Read operation (with `0` as default value)
     pub fn lookup(&self, x: &VarName) -> i32 {
         let MemConfig(map) = self;
-        todo!()
+        return *map.get(x).unwrap_or(&(0));
     }
 
     /// Write operation
     pub fn assign(&mut self, x: &VarName, n: i32) {
         let MemConfig(map) = self;
-        todo!()
+        map.insert(x.copy(), n);
     }
 }
 
