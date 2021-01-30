@@ -49,7 +49,12 @@ pub fn eval_prog_atom(p: &ProgAtom, mut mem: MemConfig) -> MemConfig {
             mem
         }
         Cond(b, p1, p2) => {
-            todo!()
+            let result = eval_bexp(b, &mem);
+            return if result {
+                eval_prog(p1, mem)
+            } else {
+                eval_prog(p2, mem)
+            }
         }
         While(b, p) => {
             todo!()
