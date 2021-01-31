@@ -27,9 +27,9 @@ pub fn mfp<L: SemiLat + FlowSemantics>(cfg_raw: &Cfg<RawAnnot>) -> Cfg<MfpAnnot<
     // The init node is not really part of the CFG (it does not have any predecessors but only serves as a predecessor itself)
     worklist.remove(&cfg.init);
 
-    while todo!() {
+    while !worklist.is_empty() {
         // Take a node out of worklist
-        let n = todo!();
+        let n = *worklist.iter().next().unwrap();
 
         // Combine annotations of predecessors
         let predecs: Vec1<&L> = cfg.predecessors(n).unwrap().mapped(|n_pre| &cfg.graph[n_pre].annot.post);
