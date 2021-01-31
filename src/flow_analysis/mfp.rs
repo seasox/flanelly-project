@@ -30,6 +30,7 @@ pub fn mfp<L: SemiLat + FlowSemantics>(cfg_raw: &Cfg<RawAnnot>) -> Cfg<MfpAnnot<
     while !worklist.is_empty() {
         // Take a node out of worklist
         let n = *worklist.iter().next().unwrap();
+        worklist.remove(&n);
 
         // Combine annotations of predecessors
         let predecs: Vec1<&L> = cfg.predecessors(n).unwrap().mapped(|n_pre| &cfg.graph[n_pre].annot.post);
