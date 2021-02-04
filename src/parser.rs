@@ -56,11 +56,12 @@ pub fn parse(s: &str) -> Result<Prog, String> {
 /// mul       ::= aexp_atom * ... * aexp_atom
 /// aexp_atom ::= n | x | `(` aexp `)`
 ///
-/// bexp      ::= lesseq | bool_neg | bool_and | bool_or
+/// bexp      ::= bool_neg | bool_or
 /// lesseq    ::= aexp `<=` aexp
-/// bool_neq  ::= `!`bexp
-/// bool_and  ::= bexp `&&` bexp
-/// bool_or  ::= bexp `||` bexp
+/// bool_neg  ::= `!`bexp
+/// bool_or  ::= bool_and `||` ... `||` bool_and
+/// bool_and  ::= bexp_atom `&&` ... `&&` bexp_atom
+/// bexp_atom ::= lesseq | `(` bexp `)`
 ///
 /// with $n \in \mathbb{N}$ and $x \in \mathit{Var}$
 /// ```
@@ -83,7 +84,7 @@ fn aexp(s: &str) -> IResult<&str, AExp> {
 
 /// A boolean expression is a less-eq comparison.
 fn bexp(s: &str) -> IResult<&str, BExp> {
-    alt((lesseq, neg, and, or))(s)
+    alt((neg, or))(s)
 }
 
 //////////
@@ -187,20 +188,38 @@ fn neg(s: &str) -> IResult<&str, BExp> {
     Ok((s, Neg(Box::new(b))))
 }
 
-fn and(s: &str) -> IResult<&str, BExp> {
-    let (s, left) = bexp(s)?;
-    // FIXME: fix operator precedence (see arithmetic sums)
-    let (s, and) = bin_op("&&", s)?;
-    let (s, right) = bexp(s)?;
-    Ok((s, And(Box::new(left), Box::new(right))))
+/// An or term consists of multiple and terms. and || ... || and
+fn or(s: &str) -> IResult<&str, BExp> {
+    // TODO: Get rid of the closure in the next line
+    let (s, summands) = separated_nonempty_list(|s2| bin_op("||", s2), and)(s)?;
+    // TODO: Use `fold_first` in the future: https://github.com/rust-lang/rust/issues/68125
+    let mut iter = summands.into_iter();
+    let hd = iter.next().unwrap();
+    let res = iter.fold(hd, |acc: BExp, x: BExp| -> BExp {Or(Box::new(acc), Box::new(x))});
+    Ok((s, res))
 }
 
-fn or(s: &str) -> IResult<&str, BExp> {
-    let (s, left) = bexp(s)?;
-    // FIXME: fix operator precedence (see arithmetic sums)
-    let (s, and) = bin_op("||", s)?;
-    let (s, right) = bexp(s)?;
-    Ok((s, And(Box::new(left), Box::new(right))))
+/// A multiplication term consists of multiple arithmetic atomic terms.  aexp_atom * ... * aexp_atom
+fn and(s: &str) -> IResult<&str, BExp> {
+    // TODO: Get rid of the closure in the next line
+    let (s, factors) = separated_nonempty_list(|s2| bin_op("&&", s2), bexp_atom)(s)?;
+    // TODO: Use `fold_first` in the future: https://github.com/rust-lang/rust/issues/68125
+    let mut iter = factors.into_iter();
+    let hd = iter.next().unwrap();
+    let res = iter.fold(hd, |acc: BExp, x: BExp| -> BExp {And(Box::new(acc), Box::new(x))});
+    Ok((s, res))
+}
+
+/// A boolean atomic term is either a lesseq expression or a parenthesized boolean expression.
+fn bexp_atom(s: &str) -> IResult<&str, BExp> {
+    alt((lesseq, bexp_parens))(s)
+}
+
+/// A parenthesized arithmetic expression
+fn bexp_parens(s: &str) -> IResult<&str, BExp> {
+    delimited(pair(tag("("), multispace0),
+              bexp,
+              pair(multispace0, tag(")")))(s)
 }
 
 //////////////
