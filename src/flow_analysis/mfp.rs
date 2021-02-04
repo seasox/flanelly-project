@@ -8,6 +8,7 @@ use crate::cfg::Cfg;
 use crate::flow_analysis::common::SemiLat;
 
 use super::common::FlowSemantics;
+use std::iter::FromIterator;
 
 /// An annotation consisting of a pre-value and a post-value. Both values will be elements of the property space `T`.
 #[derive(PartialEq,Clone,Debug,Serialize,Deserialize,Eq,Hash)]
@@ -37,14 +38,15 @@ pub fn mfp<L: SemiLat + FlowSemantics>(cfg_raw: &Cfg<RawAnnot>) -> Cfg<MfpAnnot<
         cfg.graph[n].annot.pre = todo!();
 
         // Compute f(in_n)
-        let f_in_n = todo!();
+        let f_in_n = predecs.mapped(|predec| FlowSemantics::eval_transfer_function(&cfg.graph[n].node, predec));
 
         // If n is not stable...
-        if todo!() {
+        if todo!() { //f_in_n.ne(&cfg.graph[n].clone().annot.post) {
             // ...update and...
             todo!();
             // ...mark successors
-            todo!();
+            let successors: HashSet<&NodeIdx> = HashSet::from_iter(cfg.successors(n));
+            worklist = worklist.union(successors).collect();
         }
     }
 
