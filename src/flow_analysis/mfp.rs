@@ -40,12 +40,14 @@ pub fn mfp<L: SemiLat + FlowSemantics>(cfg_raw: &Cfg<RawAnnot>) -> Cfg<MfpAnnot<
         cfg.graph[n].annot.pre = SemiLat::join(predecs);
 
         // Compute f(in_n)
-        let f_in_n = FlowSemantics::eval_transfer_function(&cfg.graph[n].node,&cfg.graph[n].annot.pre);
+        let f_in_n = FlowSemantics::eval_transfer_function(&cfg.graph[n].node, &cfg.graph[n].annot.pre);
 
         // If n is not stable...
-        if f_in_n.ne( &cfg.graph[n].annot.post) {
+        if f_in_n.ne(&cfg.graph[n].annot.post) {
+            // ...update and...
             cfg.graph[n].annot.post = f_in_n;
-            worklist.union(&HashSet::from_iter(cfg.successors(n)));
+            // ...mark successors
+            worklist.union(&(HashSet::from_iter(cfg.successors(n))));
         }
     }
 
