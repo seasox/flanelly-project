@@ -9,6 +9,7 @@ use crate::flow_analysis::common::SemiLat;
 
 use super::common::FlowSemantics;
 use std::iter::FromIterator;
+use crate::interpreter::eval_prog_atom;
 
 /// An annotation consisting of a pre-value and a post-value. Both values will be elements of the property space `T`.
 #[derive(PartialEq,Clone,Debug,Serialize,Deserialize,Eq,Hash)]
@@ -35,18 +36,16 @@ pub fn mfp<L: SemiLat + FlowSemantics>(cfg_raw: &Cfg<RawAnnot>) -> Cfg<MfpAnnot<
 
         // Combine annotations of predecessors
         let predecs: Vec1<&L> = cfg.predecessors(n).unwrap().mapped(|n_pre| &cfg.graph[n_pre].annot.post);
-        cfg.graph[n].annot.pre = todo!();
+        // join
+        cfg.graph[n].annot.pre = SemiLat::join(predecs);
 
         // Compute f(in_n)
-        let f_in_n = predecs.mapped(|predec| FlowSemantics::eval_transfer_function(&cfg.graph[n].node, predec));
+        let f_in_n = FlowSemantics::eval_transfer_function(&cfg.graph[n].node,&cfg.graph[n].annot.pre);
 
         // If n is not stable...
-        if todo!() { //f_in_n.ne(&cfg.graph[n].clone().annot.post) {
-            // ...update and...
-            todo!();
-            // ...mark successors
-            let successors: HashSet<&NodeIdx> = HashSet::from_iter(cfg.successors(n));
-            worklist = worklist.union(successors).collect();
+        if f_in_n.ne( &cfg.graph[n].annot.post) {
+            cfg.graph[n].annot.post = f_in_n;
+            worklist.union(&HashSet::from_iter(cfg.successors(n)));
         }
     }
 
