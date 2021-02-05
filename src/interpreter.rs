@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 
 use crate::{ast::{Prog, ProgAtom, ProgAtom::*}, aexp::AExp, aexp::AExp::*, bexp::BExp::*, common::VarName, bexp::BExp};
-use std::fs::read_to_string;
 
 /// This struct represents a memory configuration. Each variable is assigned an `i32` via a `HashMap`; if there is no entry in the `HashMap`, then the assignment is `0`.
 #[derive(Debug)]

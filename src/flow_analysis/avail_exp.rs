@@ -45,7 +45,8 @@ impl SemiLat for ExpSetLat {
 
 impl FlowSemantics for ExpSetLat {
     fn eval_transfer_function(n: &Node, set: &Self) -> Self {
-        todo!()
+        //TODO()
+        set.clone()
     }
 
     /// In the beginning, no expression is available

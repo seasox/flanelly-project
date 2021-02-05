@@ -9,7 +9,6 @@ use crate::flow_analysis::common::SemiLat;
 
 use super::common::FlowSemantics;
 use std::iter::FromIterator;
-use crate::interpreter::eval_prog_atom;
 
 /// An annotation consisting of a pre-value and a post-value. Both values will be elements of the property space `T`.
 #[derive(PartialEq,Clone,Debug,Serialize,Deserialize,Eq,Hash)]

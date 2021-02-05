@@ -184,10 +184,10 @@ impl<A> Cfg<A> {
     /// Map a Cfg<A> to a Cfg<B> by mapping the node annotations according to `f`
     pub fn map<B, F>(self: &Cfg<A>, f: F) -> Cfg<B>
     where F: Fn(&A) -> B {
-        let node_map = |idx: NodeIndex, node: &AnnotNode<A>| {
+        let node_map = |_: NodeIndex, node: &AnnotNode<A>| {
             return AnnotNode::new(node.node.clone(), f(&node.annot));
         };
-        let edge_map = |idx: EdgeIndex, x: &Edge| x.clone();
+        let edge_map = |_: EdgeIndex, x: &Edge| x.clone();
         let mapped_graph = self.graph.map(node_map, edge_map);
         return Cfg::new(mapped_graph, self.init)
     }
