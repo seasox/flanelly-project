@@ -190,7 +190,7 @@ fn neg(s: &str) -> IResult<&str, BExp> {
 fn and(s: &str) -> IResult<&str, BExp> {
     let (s, left) = bexp(s)?;
     // FIXME: fix operator precedence (see arithmetic sums)
-    let (s, and) = bin_op("&&", s)?;
+    let (s, _and) = bin_op("&&", s)?;
     let (s, right) = bexp(s)?;
     Ok((s, And(Box::new(left), Box::new(right))))
 }
@@ -198,7 +198,7 @@ fn and(s: &str) -> IResult<&str, BExp> {
 fn or(s: &str) -> IResult<&str, BExp> {
     let (s, left) = bexp(s)?;
     // FIXME: fix operator precedence (see arithmetic sums)
-    let (s, and) = bin_op("||", s)?;
+    let (s, _and) = bin_op("||", s)?;
     let (s, right) = bexp(s)?;
     Ok((s, And(Box::new(left), Box::new(right))))
 }
