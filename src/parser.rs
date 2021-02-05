@@ -56,11 +56,12 @@ pub fn parse(s: &str) -> Result<Prog, String> {
 /// mul       ::= aexp_atom * ... * aexp_atom
 /// aexp_atom ::= n | x | `(` aexp `)`
 ///
-/// bexp      ::= lesseq | bool_neg | bool_and | bool_or
+/// bexp      ::= bool_neg | bool_or
 /// lesseq    ::= aexp `<=` aexp
-/// bool_neq  ::= `!`bexp
-/// bool_and  ::= bexp `&&` bexp
-/// bool_or  ::= bexp `||` bexp
+/// bool_neg  ::= `!`bexp
+/// bool_or  ::= bool_and `||` ... `||` bool_and
+/// bool_and  ::= bexp_atom `&&` ... `&&` bexp_atom
+/// bexp_atom ::= lesseq | `(` bexp `)`
 ///
 /// with $n \in \mathbb{N}$ and $x \in \mathit{Var}$
 /// ```
@@ -83,7 +84,7 @@ fn aexp(s: &str) -> IResult<&str, AExp> {
 
 /// A boolean expression is a less-eq comparison.
 fn bexp(s: &str) -> IResult<&str, BExp> {
-    alt((lesseq, neg, and, or))(s)
+    alt((neg, or))(s)
 }
 
 //////////
