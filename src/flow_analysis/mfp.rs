@@ -35,7 +35,6 @@ pub fn mfp<L: SemiLat + FlowSemantics>(cfg_raw: &Cfg<RawAnnot>) -> Cfg<MfpAnnot<
 
         // Combine annotations of predecessors
         let predecs: Vec1<&L> = cfg.predecessors(n).unwrap().mapped(|n_pre| &cfg.graph[n_pre].annot.post);
-        // join
         cfg.graph[n].annot.pre = SemiLat::join(predecs);
 
         // Compute f(in_n)
@@ -43,10 +42,13 @@ pub fn mfp<L: SemiLat + FlowSemantics>(cfg_raw: &Cfg<RawAnnot>) -> Cfg<MfpAnnot<
 
         // If n is not stable...
         if f_in_n.ne(&cfg.graph[n].annot.post) {
-            // ...update and...
+            // update post
             cfg.graph[n].annot.post = f_in_n;
-            // ...mark successors
-            worklist.union(&(HashSet::from_iter(cfg.successors(n))));
+            // mark successors
+            // create set of successor nodes
+            let successors = HashSet::from_iter(cfg.successors(n));
+            // worklist U successors
+            worklist = worklist.union(&successors).cloned().collect();
         }
     }
 
