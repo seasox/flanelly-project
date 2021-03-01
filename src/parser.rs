@@ -59,7 +59,7 @@ pub fn parse(s: &str) -> Result<Prog, String> {
 /// bexp      ::= bool_neg | bool_or
 /// lesseq    ::= aexp `<=` aexp
 /// bool_neg  ::= `!`bexp
-/// bool_or  ::= bool_and `||` ... `||` bool_and
+/// bool_or   ::= bool_and `||` ... `||` bool_and
 /// bool_and  ::= bexp_atom `&&` ... `&&` bexp_atom
 /// bexp_atom ::= lesseq | `(` bexp `)`
 ///
